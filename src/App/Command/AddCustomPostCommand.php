@@ -9,25 +9,26 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GenerateRandomPostCommand extends Command
+class AddCustomPostCommand extends Command
 {
     /**
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $em;
+
     /**
      * @var LoremIpsum
      */
     private LoremIpsum $loremIpsum;
 
     public function __construct(
-        EntityManagerInterface $em,
+        EntityManagerInterface $entityManager,
         LoremIpsum $loremIpsum,
         string $name = null
     ) {
-        parent::__construct($name);
-        $this->em = $em;
+        $this->em = $entityManager;
         $this->loremIpsum = $loremIpsum;
+        parent::__construct($name);
     }
 
     /**
@@ -35,23 +36,24 @@ class GenerateRandomPostCommand extends Command
      */
     protected function configure(): void
     {
-        $this->setName('app:generate-random-post');
-        $this->setDescription('Generate random post');
+        $this->setName('app:add-custom-post');
+        $this->setDescription('Generate custom post');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $title = $this->loremIpsum->words(mt_rand(4, 6));
-        $content = $this->loremIpsum->paragraphs(2);
-
         $post = new Post();
-        $post->setTitle($title);
-        $post->setContent($content);
-
+        $post->setTitle(sprintf("Summary %s", (new \DateTime())->format('Y-m-d')));
+        $post->setContent($this->loremIpsum->paragraph());
         $this->em->persist($post);
         $this->em->flush();
 
-        $output->writeln('A random post has been generated.');
+        $output->writeln('The post has been added.');
 
         return Command::SUCCESS;
     }

@@ -24,7 +24,7 @@ services:
     volumes:
       - recr7daysTask2Db:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: "database"
+      MYSQL_DATABASE: "7days_test_task2"
       MYSQL_USER: "test"
       MYSQL_PASSWORD: "test"
       MYSQL_ROOT_PASSWORD: "root"
